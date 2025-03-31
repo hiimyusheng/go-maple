@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/schollz/progressbar/v3"
@@ -131,14 +132,21 @@ func main() {
 		break
 	}
 	fmt.Println("目前最新版本為 V" + version + "，全新下載請輸入new，更新請輸入update")
-	fmt.Print("請輸入: ")
-	fmt.Scanln(&input)
+	// 清空輸入緩衝區
+	for {
+		fmt.Print("請輸入: ")
+		fmt.Scanln(&input)
 
-	if (input != "new") && (input != "update") {
-		fmt.Println("輸入錯誤")
-		fmt.Println("輸入任意鍵以結束程式...")
-		fmt.Scanln()
-		return
+		// 去除輸入中可能的空格
+		input = strings.TrimSpace(input)
+
+		if input == "new" || input == "update" {
+			break // 有效輸入，跳出循環
+		} else if input != "" {
+			// 只有在用戶實際輸入了內容但不正確時才顯示錯誤
+			fmt.Println("輸入錯誤，請輸入 new 或 update")
+		}
+		// 如果輸入為空，繼續循環
 	}
 
 	if input == "new" {
