@@ -33,7 +33,7 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
           FILE_PATH: ${{ secrets.FILE_PATH }}
-        run: go build -v -o "maple-downloader-${{ env.VERSION }}.exe" -ldflags "-X main.URL=${{ secrets.URL }} -X main.USERNAME=${{ secrets.USERNAME }} -X main.PASSWORD=${{ secrets.PASSWORD }} -X main.FILE_PATH=${{ secrets.FILE_PATH }}" ./...
+        run: go build -v -o "maple-downloader-${{ env.VERSION }}.exe" -ldflags "-X main.URL=${{ secrets.URL }} -X main.USERNAME=${{ secrets.USERNAME }} -X main.PASSWORD=${{ secrets.PASSWORD }}" ./...
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
