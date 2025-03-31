@@ -12,6 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Generate version
+        id: version
+        run: |
+          VERSION="v$(date +'%Y.%m.%d.%H%M')"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -26,27 +33,21 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
           FILE_PATH: ${{ secrets.FILE_PATH }}
-        run: go build -v -o maple-downloader.exe -ldflags "-X main.URL=${{ secrets.URL }} -X main.USERNAME=${{ secrets.USERNAME }} -X main.PASSWORD=${{ secrets.PASSWORD }} -X main.FILE_PATH=${{ secrets.FILE_PATH }}" ./...
+        run: go build -v -o "maple-downloader-${{ env.VERSION }}.exe" -ldflags "-X main.URL=${{ secrets.URL }} -X main.USERNAME=${{ secrets.USERNAME }} -X main.PASSWORD=${{ secrets.PASSWORD }} -X main.FILE_PATH=${{ secrets.FILE_PATH }}" ./...
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: maple-windows-executable
-          path: maple-downloader.exe
+          path: maple-downloader-${{ env.VERSION }}.exe
           retention-days: 7
-
-      - name: Generate release tag
-        id: tag
-        run: |
-          echo "release_tag=v$(date +'%Y.%m.%d.%H%M')" >> $GITHUB_OUTPUT
 
       - name: Create Release and Upload Asset
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.tag.outputs.release_tag }}
-          name: Release ${{ steps.tag.outputs.release_tag }}
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
-          files: maple-downloader-v$(date +'%Y.%m.%d.%H%M').exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: maple-downloader-${{ env.VERSION }}.exe
+          token: ${{ secrets.GITHUB_TOKEN }}
