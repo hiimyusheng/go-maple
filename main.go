@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	URL       string
-	USERNAME  string
-	PASSWORD  string
-	FILE_PATH string
+	URL       = ""
+	USERNAME  = ""
+	PASSWORD  = ""
+	FILE_PATH = "/MapleStory/file_tree.json"
 )
 
 // AuthResponse 解析登入回應的 JSON
@@ -32,26 +32,11 @@ type FileTree struct {
 }
 
 func init() {
-	// 初始化環境變數
-	URL = getEnv("URL", "")
-	USERNAME = getEnv("USERNAME", "")
-	PASSWORD = getEnv("PASSWORD", "")
-	FILE_PATH = getEnv("FILE_PATH", "/MapleStory/file_tree.json")
-
-	// 檢查必要的環境變數
+	// 檢查必要的變數是否被正確注入
 	if URL == "" || USERNAME == "" || PASSWORD == "" {
-		fmt.Println("錯誤: 必須設定 URL, USERNAME 和 PASSWORD 環境變數")
+		fmt.Println("錯誤: 未能正確注入必要的環境變數")
 		os.Exit(1)
 	}
-}
-
-// getEnv 讀取環境變數，如果不存在則返回預設值
-func getEnv(key, defaultValue string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		return defaultValue
-	}
-	return value
 }
 
 func main() {
